@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Document } from "mongoose";
 import { IBook } from "../interface/book.interface";
 
 const bookSchema = new Schema<IBook>(
@@ -36,7 +36,7 @@ const bookSchema = new Schema<IBook>(
     copies: {
       type: Number,
       required: [true, "Number of copies is required"],
-      min: [1, "There must be at least 1 copy"],
+      min: [0, "Copies must be a positive number"],
     },
     available: {
       type: Boolean,
@@ -48,5 +48,30 @@ const bookSchema = new Schema<IBook>(
   }
 );
 
+bookSchema.pre('save', function(next) {
+  if (this.copies === 0) {
+    this.available = false;
+  } else {
+    this.available = true;
+  }
+  next();
+});
+
+bookSchema.methods.updateAvailability = function() {
+  if (this.copies === 0) {
+    this.available = false;
+  } else {
+    this.available = true;
+  }
+  return this.save();
+};
+
+bookSchema.statics.findByGenre = function(genre: string) {
+  return this.find({ genre });
+};
+
+bookSchema.statics.findAvailableBooks = function() {
+  return this.find({ available: true, copies: { $gt: 0 } });
+};
 
 export const Book = model<IBook>("Book", bookSchema);
