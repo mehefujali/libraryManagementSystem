@@ -1,4 +1,4 @@
-import { Model, Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { IBook } from "../interface/book.interface";
 
 const bookSchema = new Schema<IBook>({
@@ -32,14 +32,16 @@ const bookSchema = new Schema<IBook>({
     type: String,
     required: false,
   },
-  copies: {
+  copies:{
     type: Number,
-    required: true,
+    required:true,
+    
   },
-  available: {
-    type: Boolean,
-    default: true,
-  },
+  available:{
+    type:Boolean,
+    default:true
+  }
 });
 
-export const Book = new Model("Book", bookSchema);
+
+export const Book = model("Book" , bookSchema)
