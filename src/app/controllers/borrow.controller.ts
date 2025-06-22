@@ -9,14 +9,14 @@ export const borrowBook = async (req: Request, res: Response) => {
 
     const book = await Book.findById(newBorrowBook.book);
     if (!book) {
-      res.status(404).json({
+      return res.status(404).json({
         status: false,
         message: "Book not found",
       });
     }
 
-    if (book?.copies < newBorrowBook.quantity) {
-      res.status(400).json({
+    if (book.copies < newBorrowBook.quantity) {
+      return res.status(400).json({
         status: false,
         message: "Not enough copies available",
       });
@@ -25,7 +25,7 @@ export const borrowBook = async (req: Request, res: Response) => {
     const borrow = await Borrow.create(newBorrowBook);
 
     // Update book copies
-    await Book.findByIdAndUpdate(book?._id, {
+    await Book.findByIdAndUpdate(book._id, {
       $inc: { copies: -newBorrowBook.quantity },
     });
 
@@ -45,7 +45,14 @@ export const borrowBook = async (req: Request, res: Response) => {
 
 export const BorrowedBooks = async (req: Request, res: Response) => {
   try {
-    
+    const borrowedBooks = await Borrow.find()
+      .populate('book', 'title author isbn copies');
+
+    res.status(200).json({
+      status: true,
+      message: "Borrowed books retrieved successfully",
+      data: borrowedBooks,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

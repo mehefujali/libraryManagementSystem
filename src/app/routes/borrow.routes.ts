@@ -1,9 +1,9 @@
 import express from 'express'
-import { borrowBook, getBorrowedBooksSummary } from '../controllers/borrow.controller'
+import { borrowBook, BorrowedBooks } from '../controllers/borrow.controller'
 
 
 
 export const borrowRouter = express.Router()
 
 borrowRouter.post("/" , borrowBook)
-borrowRouter.get("/", getBorrowedBooksSummary)
+borrowRouter.get("/", BorrowedBooks)
