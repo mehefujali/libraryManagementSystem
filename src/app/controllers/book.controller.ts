@@ -8,13 +8,87 @@ export const createBook = async (req: Request, res: Response) => {
     res.status(201).json({
       status: true,
       message: "Book created success",
-      newBook,
+      data: newBook,
     });
-
   } catch (error) {
     res.status(500).json({
       status: false,
-      Message: "Server error ",
+      Message: "Server error",
+      Error: error,
+    });
+  }
+};
+
+export const getAllBooks = async (req: Request, res: Response) => {
+  try {
+    const books = await Book.find();
+    res.status(200).json({
+      status: true,
+      message: "All Book fetched  success",
+      data: books,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      Message: "Server error",
+      Error: error,
+    });
+  }
+};
+
+export const getBookById = async (req: Request, res: Response) => {
+  try {
+    const bookId = req.params.id;
+    const book = await Book.findById(bookId);
+    res.status(200).json({
+      status: true,
+      message: " Book fetched  success",
+      data: book,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      Message: "Server error",
+      Error: error,
+    });
+  }
+};
+
+export const updateBook = async (req: Request, res: Response) => {
+  try {
+    const newUpdateBook = req.body;
+    const bookId = req.params.id;
+
+    const updatedBook = await Book.findByIdAndUpdate(bookId, newUpdateBook, {
+      new: true,
+    });
+    res.status(200).json({
+      status: true,
+      message: " Book updated  success",
+      data: updatedBook,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      Message: "Server error",
+      Error: error,
+    });
+  }
+};
+
+export const deleteBook = async (req: Request, res: Response) => {
+  try {
+    const bookId = req.params.id;
+    const deleteBook = await Book.findByIdAndDelete(bookId);
+    res.status(204).json({
+      status: true,
+      message: " Book updated  success",
+      data: deleteBook,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      Message: "Server error",
       Error: error,
     });
   }

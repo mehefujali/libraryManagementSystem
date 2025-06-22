@@ -1,6 +1,14 @@
 import express from "express";
-import { createBook } from "../controllers/book.controller";
+import {
+  createBook,
+  getAllBooks,
+  getBookById,
+  updateBook,
+} from "../controllers/book.controller";
 
 export const bookRouter = express.Router();
 
 bookRouter.post("/", createBook);
+bookRouter.get("/", getAllBooks);
+bookRouter.get("/:id", getBookById);
+bookRouter.put("/:id" , updateBook)
