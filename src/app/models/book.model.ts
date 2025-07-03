@@ -1,4 +1,4 @@
-import { model, Schema, Document } from "mongoose";
+import { model, Schema } from "mongoose";
 import { IBook } from "../interface/book.interface";
 
 const bookSchema = new Schema<IBook>(

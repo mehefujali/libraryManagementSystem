@@ -1,13 +1,21 @@
 import mongoose from "mongoose";
-const MONGO_URI = process.env.MONGO_URI;
+import { configDotenv } from "dotenv";
 
-export const mongoDB = () => {
+configDotenv()
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/libraryManagementSystem";
+
+export const mongoDB = async (): Promise<void> => {
   try {
-    mongoose.connect(
-      MONGO_URI || "mongodb://localhost:27017/libraryManagementSystem"
-    );
+    await mongoose.connect(MONGO_URI, {
+     
+      retryWrites: true,
+      w: 'majority'
+    });
+   
     console.log("MONGODB CONNECTED");
   } catch (error) {
-    console.error(error);
+    // eslint-disable-next-line no-console
+    console.error("MongoDB connection error:", error);
+    process.exit(1);
   }
 };

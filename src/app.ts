@@ -6,17 +6,22 @@ import { bookRouter } from "./app/routes/books.routes";
 import { borrowRouter } from "./app/routes/borrow.routes";
 
 configDotenv();
-mongoDB();
 
-//app
+// Initialize database connection
+mongoDB().catch((error) => {
+  console.error("Failed to connect to database:", error);
+  process.exit(1);
+});
+
+//app ---------------------------
 export const app: Application = express();
 
-// Middle ware
+// Middle ware----------------------
 
 app.use(cors());
 app.use(express.json());
 
-// APIS
+// APIS--------------------------
 
 app.use("/api/books", bookRouter);
 app.use("/api/borrow", borrowRouter);

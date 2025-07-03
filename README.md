@@ -1,126 +1,191 @@
-📚 Library Management System – 
-Built this mini project using Express, TypeScript, and MongoDB. Nothing too fancy — just basic book management and borrowing stuff. Keeping it here in case I come back later to improve it or reuse the code.
+# Library Management System API
 
-💡 What It Does
-Can add, edit, delete, and fetch books
+A robust RESTful API for managing library operations including book inventory, borrowing, and returns.
 
-Borrow books (with checks for available copies)
+## 🚀 Features
 
-Filter books by genre, sort them by fields
+- **Book Management**: CRUD operations for books with advanced filtering and sorting
+- **Borrowing System**: Track book borrowings with due dates and quantity management
+- **Inventory Control**: Automatic copy management and availability tracking
+- **Data Validation**: Comprehensive input validation and error handling
+- **TypeScript**: Full TypeScript support with strict type checking
+- **MongoDB**: Scalable NoSQL database with Mongoose ODM
+- **RESTful API**: Clean, intuitive API endpoints following REST conventions
 
-Borrow summary using aggregation pipeline
+## 🛠️ Tech Stack
 
-Full schema validation — no garbage data allowed
+- **Runtime**: Node.js
+- **Framework**: Express.js
+- **Language**: TypeScript
+- **Database**: MongoDB with Mongoose
+- **Development**: ts-node-dev for hot reloading
+- **Code Quality**: ESLint with TypeScript support
 
-Pre-save hooks and static methods for future enhancements
+## 📋 Prerequisites
 
-Clean error responses — not perfect but does the job
+- Node.js (v18 or higher)
+- MongoDB (local or cloud instance)
+- npm or yarn package manager
 
-🧰 Tech Stack
-Express.js + TypeScript
+## 🔧 Installation
 
-MongoDB (via Mongoose)
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd library-management-system
+   ```
 
-Middlewares: CORS, JSON parsing, and some basic checks
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-⚙️ Setup (So I Don't Forget)
-bash
-Copy
-Edit
-git clone <repo-url>
-cd Library-Management-System
-npm install
-Then create a .env file with:
+3. **Environment Setup**
+   Create a `.env` file in the root directory:
+   ```env
+   PORT=8080
+   MONGO_URI=mongodb://localhost:27017/libraryManagementSystem
+   NODE_ENV=development
+   ```
 
-env
-Copy
-Edit
-PORT=8080
-MONGO_URI=mongodb://localhost:27017/libraryManagementSystem
-To run locally:
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-bash
-Copy
-Edit
-npm run dev
-That’s it. Server should be up at http://localhost:8080
+## 📚 API Endpoints
 
-📫 API Notes (for myself, if I forget)
-Books
-Add Book
-POST /api/books
+### Books
 
-json
-Copy
-Edit
-{
-  "title": "The Theory of Everything",
-  "author": "Stephen Hawking",
-  "genre": "SCIENCE",
-  "isbn": "9780553380163",
-  "description": "Some description",
-  "copies": 5
-}
-Get All Books
-GET /api/books
-Supports: ?filter=GENRE&sortBy=createdAt&sort=desc&limit=5
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/books` | Create a new book |
+| `GET` | `/api/books` | Get all books with filtering and pagination |
+| `GET` | `/api/books/:id` | Get a specific book by ID |
+| `PUT` | `/api/books/:id` | Update a book |
+| `DELETE` | `/api/books/:id` | Delete a book |
 
-Get One Book
-GET /api/books/:id
+### Borrowing
 
-Update Book
-PUT /api/books/:id
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/borrow` | Borrow a book |
+| `GET` | `/api/borrow` | Get all borrowed books |
 
-Delete Book
-DELETE /api/books/:id
+## 📖 Usage Examples
 
-Borrow
-Borrow Book
-POST /api/borrow
+### Create a Book
+```bash
+curl -X POST http://localhost:8080/api/books \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "genre": "FICTION",
+    "isbn": "978-0743273565",
+    "description": "A story of the fabulously wealthy Jay Gatsby",
+    "copies": 5
+  }'
+```
 
-json
-Copy
-Edit
-{
-  "book": "ObjectId",
-  "quantity": 2,
-  "dueDate": "2025-07-18T00:00:00.000Z"
-}
-Get Borrow Summary
-GET /api/borrow
-Returns total quantity of each borrowed book using aggregation
+### Get Books with Filtering
+```bash
+curl "http://localhost:8080/api/books?filter=FICTION&sortBy=title&sort=asc&limit=10"
+```
 
-📂 Folder Structure (for future me)
-arduino
-Copy
-Edit
+### Borrow a Book
+```bash
+curl -X POST http://localhost:8080/api/borrow \
+  -H "Content-Type: application/json" \
+  -d '{
+    "book": "64f8a1b2c3d4e5f6a7b8c9d0",
+    "quantity": 1,
+    "dueDate": "2024-01-15T00:00:00.000Z"
+  }'
+```
+
+## 🏗️ Project Structure
+
+```
 src/
 ├── app/
-│   ├── controllers/
-│   ├── interface/
-│   ├── models/
-│   └── routes/
-├── config/
-├── app.ts
-└── server.ts
-🧠 Important Notes
-Borrow logic checks if enough copies are available before creating record
+│   ├── controllers/     # Request handlers
+│   ├── interface/       # TypeScript interfaces
+│   ├── models/          # Mongoose models
+│   └── routes/          # API routes
+├── config/              # Configuration files
+├── app.ts              # Express app setup
+└── server.ts           # Server entry point
+```
 
-Automatically reduces book copies when borrowed
+## 🔍 Data Models
 
-Marks a book unavailable when copies = 0
+### Book Schema
+```typescript
+{
+  title: string;           // Book title
+  author: string;          // Author name
+  genre: string;           // Book genre (FICTION, NON_FICTION, etc.)
+  isbn: string;            // Unique ISBN
+  description?: string;    // Optional description
+  copies: number;          // Number of available copies
+  available: boolean;      // Availability status
+  createdAt: Date;         // Creation timestamp
+  updatedAt: Date;         // Last update timestamp
+}
+```
 
-Validates that dueDate is in the future (no past nonsense)
+### Borrow Schema
+```typescript
+{
+  book: ObjectId;          // Reference to Book
+  quantity: number;        // Number of copies borrowed
+  dueDate: Date;           // Return due date
+  createdAt: Date;         // Borrow timestamp
+  updatedAt: Date;         // Last update timestamp
+}
+```
 
-Aggregation is used for borrow summary (not manual loops)
+## 🚀 Deployment
 
-🧹 Scripts
-bash
-Copy
-Edit
-npm run dev      # Dev server with hot reload
-npm run build    # Compiles TS -> JS
-npm start        # Runs the compiled version
-Status
-Still a work-in-progress. Basic flow works fine. Might add return flow and admin dashboard later (if I don’t get lazy).
+### Production Build
+```bash
+npm run build
+npm start
+```
+
+### Environment Variables for Production
+```env
+PORT=3000
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/library
+NODE_ENV=production
+```
+
+## 🧪 Development
+
+### Available Scripts
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint issues automatically
+
+### Code Quality
+This project uses ESLint with TypeScript support for maintaining code quality and consistency.
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📞 Support
+
+For support and questions, please open an issue in the repository.
 
